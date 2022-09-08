@@ -3,26 +3,35 @@ import {
   addContact,
   deleteContact,
   deleteCheckedContacts,
+  fetchContactsSuccess,
+  fetchContactsError,
+  fetchContactsLoading,
 } from 'redux/contacts/items/items-actions';
 
-const initialStore = [
-  {
-    id: '1',
-    name: 'Dan',
-    number: '123412312351',
-  },
-  {
-    id: '2',
-    name: 'Prestige',
-    number: '12312321312',
-  },
-];
+const initialState = {
+  items: [],
+  loading: false,
+  error: null,
+};
 
-const items = createReducer(initialStore, {
+const items = createReducer(initialState, {
+  [fetchContactsLoading]: store => {
+    store.loading = true;
+    store.error = null;
+  },
+
+  [fetchContactsSuccess]: (store, { payload }) => {
+    store.items = payload;
+    store.loading = false;
+  },
+
+  [fetchContactsError]: (store, { payload }) => {
+    store.error = payload;
+    store.loading = false;
+  },
+
   [addContact]: (store, { payload }) => {
-    const duplicateContact = store.find(
-      contact => contact.number === payload.number
-    );
+    const duplicateContact = store.find(contact => contact.number === payload.number);
 
     if (duplicateContact?.number === payload.number) {
       alert(`Number:${payload.number} is already in your contacts`);
@@ -31,8 +40,9 @@ const items = createReducer(initialStore, {
 
     store.push(payload);
   },
-  [deleteContact]: (store, { payload }) =>
-    store.filter(el => el.id !== payload),
+
+  [deleteContact]: (store, { payload }) => store.filter(el => el.id !== payload),
+
   [deleteCheckedContacts]: (_, { payload }) => payload,
 });
 
