@@ -6,3 +6,13 @@ export const getContacts = async () => {
   const { data } = await axios.get('/');
   return data;
 };
+
+export const postContacts = async contact => {
+  const { data } = await axios.post('/', contact);
+  return data;
+};
+
+export const deleteContactsApi = async id => {
+  const { data } = await axios.delete(`/${id}`);
+  return data;
+};
